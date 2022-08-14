@@ -290,3 +290,5 @@ B_minusQ = By * np.cos( gamma ) - ( Bx * np.cos( theta ) - Bz * np.sin( theta ) 
 ## then have fun with data visualization
 ...
 ```
+
+to read .h5 data in IDL, refer to https://www.l3harrisgeospatial.com/docs/hdf5_overview.html
