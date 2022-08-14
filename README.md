@@ -8,7 +8,7 @@ hazel2:
 
 ## 1. setup environment
 
-in HIDA server, the pytho environment of hazel in installed in `/home/kouui/miniconda3/envs/hazel2.3.6`, therefore, the only setup you need is to add this environment to your path. 
+in HIDA server, the python environment of hazel is installed in `/home/kouui/miniconda3/envs/hazel2.3.6`, what you need is to add this environment to your path. 
 
 add the following line to your `~/.cshrc` file.
 ```shell
