@@ -241,7 +241,7 @@ obsdata.h5       : the necessary data to perform inversion (and some other data 
 
 the result of inversion will be stored in `output.h5`, check hazel documentation for details.
 
-## 4. post process
+## 4. post processing
 
 with the data in `obsdata.h5`, to restore observed stokes profile
 ```python
@@ -291,4 +291,103 @@ B_minusQ = By * np.cos( gamma ) - ( Bx * np.cos( theta ) - Bz * np.sin( theta ) 
 ...
 ```
 
-to read .h5 data in IDL, refer to https://www.l3harrisgeospatial.com/docs/hdf5_overview.html
+to read .h5 data in IDL( for details refer to https://www.l3harrisgeospatial.com/docs/hdf5_overview.html)
+```IDL
+IDL> file = 'output.h5'
+IDL> h5_list, file
+% Loaded DLM: HDF5.
+file        output.h5
+group       /ch1
+dataset     /ch1/B                   H5T_FLOAT [1, 1, 272]
+dataset     /ch1/B_err               H5T_VLEN [1, 272]
+dataset     /ch1/B_nodes             H5T_VLEN [1, 272]
+dataset     /ch1/Bx                  H5T_FLOAT [1, 1, 272]
+dataset     /ch1/Bx_err              H5T_VLEN [1, 272]
+dataset     /ch1/Bx_nodes            H5T_VLEN [1, 272]
+dataset     /ch1/By                  H5T_FLOAT [1, 1, 272]
+dataset     /ch1/By_err              H5T_VLEN [1, 272]
+dataset     /ch1/By_nodes            H5T_VLEN [1, 272]
+dataset     /ch1/Bz                  H5T_FLOAT [1, 1, 272]
+dataset     /ch1/Bz_err              H5T_VLEN [1, 272]
+dataset     /ch1/Bz_nodes            H5T_VLEN [1, 272]
+dataset     /ch1/a                   H5T_FLOAT [1, 1, 272]
+dataset     /ch1/a_err               H5T_VLEN [1, 272]
+dataset     /ch1/a_nodes             H5T_VLEN [1, 272]
+dataset     /ch1/beta                H5T_FLOAT [1, 1, 272]
+dataset     /ch1/beta_err            H5T_VLEN [1, 272]
+dataset     /ch1/beta_nodes          H5T_VLEN [1, 272]
+dataset     /ch1/deltav              H5T_FLOAT [1, 1, 272]
+dataset     /ch1/deltav_err          H5T_VLEN [1, 272]
+dataset     /ch1/deltav_nodes        H5T_VLEN [1, 272]
+dataset     /ch1/ff                  H5T_FLOAT [1, 1, 272]
+dataset     /ch1/ff_err              H5T_VLEN [1, 272]
+dataset     /ch1/ff_nodes            H5T_VLEN [1, 272]
+dataset     /ch1/phiB                H5T_FLOAT [1, 1, 272]
+dataset     /ch1/phiB_err            H5T_VLEN [1, 272]
+dataset     /ch1/phiB_nodes          H5T_VLEN [1, 272]
+dataset     /ch1/tau                 H5T_FLOAT [1, 1, 272]
+dataset     /ch1/tau_err             H5T_VLEN [1, 272]
+dataset     /ch1/tau_nodes           H5T_VLEN [1, 272]
+dataset     /ch1/thB                 H5T_FLOAT [1, 1, 272]
+dataset     /ch1/thB_err             H5T_VLEN [1, 272]
+dataset     /ch1/thB_nodes           H5T_VLEN [1, 272]
+dataset     /ch1/v                   H5T_FLOAT [1, 1, 272]
+dataset     /ch1/v_err               H5T_VLEN [1, 272]
+dataset     /ch1/v_nodes             H5T_VLEN [1, 272]
+group       /spec1
+dataset     /spec1/aic               H5T_FLOAT [2, 1, 272]
+dataset     /spec1/bic               H5T_FLOAT [2, 1, 272]
+dataset     /spec1/chi2              H5T_FLOAT [2, 1, 272]
+dataset     /spec1/stokes            H5T_FLOAT [125, 4, 1, 272]
+dataset     /spec1/stokes_lr         H5T_FLOAT [125, 4, 1, 272]
+dataset     /spec1/wavelength        H5T_FLOAT [125]
+dataset     /spec1/wavelength_lr     H5T_FLOAT [125]
+```
+
+
+```IDL
+;; step 1. read dimension and los angles
+file = 'obsdata.h5'
+;; fid : file id
+;; did : dataset id
+;; aid : attribute id (attribute is similar to header)
+fid = h5f_open(file)
+did = h5d_open(fid, 'stokes')
+dims = uintarr(3)
+foreach name, ['nwave','nslit','nscan'], i do begin
+    aid = h5a_open_name(did,name)
+    dims[i] = h5a_read(aid)
+    h5a_close, aid
+endforeach
+h5d_close, did
+
+did = h5d_open(fid, 'los')
+losarr = h5d_read(did)
+h5d_close, did
+h5f_close, fid
+dim = {nwave:dims[0],nslit:dims[1],nscan:dims[2]}
+delvar, dims
+
+;; step 2. read inversion result
+file = 'output.h5'
+fid = h5f_open(file)
+
+Bs = dblarr(dim.nscan*dim.nslit, 3)
+foreach name, ['Bx', 'By', 'Bz'], i do begin
+    did = h5d_open(fid, '/ch1/'+name)
+    Bs[*,i] = h5d_read(did)
+    h5d_close, did
+endforeach
+h5f_close, fid
+B = {x: reform(Bs[*,0], nslit, nscan),y: reform(Bs[*,1], nslit, nscan),z: reform(Bs[*,2], nslit, nscan)}
+delvar, Bs
+
+theta = reform(losarr[0,*], nslit, nscan) * !pi / 180.
+gamma = reform(losarr[2,*], nslit, nscan) * !pi / 180.
+
+B1 = {los: B.z * cos( theta ) + B.x * sin( theta ), $                                            ; in LOS direction
+      plusQ : B.y * sin( gamma ) + ( B.x * cos( theta ) - B.z * sin( theta ) ) * cos( gamma ), $ ; +Q in slit direction
+      minusQ: B.y * cos( gamma ) - ( B.x * cos( theta ) - B.z * sin( theta ) ) * sin( gamma )}   ; -Q in scan direction 
+      
+;; step 3. then have fun with data visualization 
+```
