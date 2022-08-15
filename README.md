@@ -74,7 +74,7 @@ mod.add_chromosphere({'Name': 'ch1', 'Spectral region': 'spec1', 'Height': 10.0,
 mod.setup()
 
 ##: the necessary free parameter for stokes profile generation in a chromosphere is 
-##    - Bxyz : magnetic filed, [Gauss]
+##    - Bxyz : magnetic field, [Gauss]
 ##    - tau  : optical depth
 ##    - v    : doppler velocity, [km/s]
 ##    - delta: turbulent velocity, [km/s]
@@ -97,16 +97,16 @@ mod.synthesize()
 
 ##: to plot the profiles as an example
 import matplotlib.pyplot as plt
-fig, axs = plt.subplots(nrows=2, ncols=2, figsize=(10,10), sharex=True)
+fig, axs = plt.subplots(nrows=2, ncols=2, figsize=(10,10), sharex_True)
 axs = axs.flatten()
 label = ['I', 'Q', 'U', 'V']
 for i in range(4):
     ax = axs[i]
     ax.plot(mod.spectrum['spec1'].wavelength_axis, mod.spectrum['spec1'].stokes[i,:])
-    if i>0: ## set a symmetric ylim according to the original ylim
+    if i>0: ## set a symmetric ylim for QUV profiles according to the original ylim
         ylim = np.abs(ax.get_ylim()).max() * 1.05 
         ax.set_ylim(-ylim,+ylim)
-    ax.set_xlabel('Wavelength - 10830[$\AA$]')
+    ax.set_xlabel('Wavelength [$\AA$]')
     ax.set_ylabel('{0}/Ic'.format(label[i]))
 plt.show(block=False)
 
@@ -115,7 +115,7 @@ plt.show(block=False)
 ## 3. use `dstpol2hazel` to prepare inversion data
 
 the `dstpol2hazel` command line tool is for generating input data and configuration files of hazel inversion given the DSTPOL calibrated IDL `*.sav` files.
-which is a symbolic to a python script.
+which is a symbolic link to a python script (executable).
 ```
 $ which dstpol2hazel
 /home/kouui/miniconda3/envs/hazel2.3.6/bin/dstpol2hazel
@@ -124,7 +124,7 @@ lrwxrwxrwx. 1 kouui users 67  8月 12 14:44 /home/kouui/miniconda3/envs/hazel2.3
 ```
 please feel free to check the source code.
 
-to check the meaning of command line arguments
+to check the meaning of its command line arguments
 ```
 $ dstpol2hazel -h
 usage: dstpol2hazel [-h] [--istart ISTART] [--iend IEND] [--outdir OUTDIR]
