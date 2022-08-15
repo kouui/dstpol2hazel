@@ -57,7 +57,7 @@ mod = hazel.Model(working_mode='synthesis', verbose=3)
 ##        - chi   : keep this value to 0. then X is pointing towards disc center
 ##        - gamma : angle between X0(vector of X projected onto the plane normal to LOS) and +Q(slit direction in DSTPOL)    
 ##  - 'Wavelength' : [left bound, right bound, numer of point of wavelength]
-##  - 'Boundary condition' : incident stokes vector (refer to hazel documentation for details) 
+##  - 'Boundary condition' : background stokes vector, (1,0,0,0) on disk and (0,0,0,0) off limb. (refer to hazel documentation for details) 
 nwave = 150
 mod.add_spectral({'Name': 'spec1', 'Wavelength': [10826, 10833, nwave], 'topology': 'ch1',
     'LOS': [0.0,0.0,0.0], 'Boundary condition': [1.0,0.0,0.0,0.0]})
