@@ -64,7 +64,7 @@ mod.add_spectral({'Name': 'spec1', 'Wavelength': [10826, 10833, nwave], 'topolog
 
 ##: and then add the atmosphere 'ch1' to the model
 ##  - 'Height': height from photosphere in unit of [arcsec] (how it is converted to [km] is still not sure)
-##  - 'Line' : related to which atmoc model to use
+##  - 'Line' : related to which atomic model to use
 ##  - 'Wavelength' : the wavelength range for simulating this specific 'Line'
 mod.add_chromosphere({'Name': 'ch1', 'Spectral region': 'spec1', 'Height': 10.0, 'Line': '10830',
                       'Wavelength': [10826, 10833]})
@@ -283,7 +283,7 @@ Bz = Bz.reshape(nscan,nslit)
 theta = np.deg2rad(los[:,:,0])  # (nscan,nslit)
 gamma = np.deg2rad(los[:,:,2])  # (nscan,nslit)
 
-B_los = Bz * np.cos( theta ) + Bx * np.sin( theta )
+B_los    = Bz * np.cos( theta ) + Bx * np.sin( theta )
 B_plusQ  = By * np.sin( gamma ) + ( Bx * np.cos( theta ) - Bz * np.sin( theta ) ) * np.cos( gamma )  # +Q is in slit direction
 B_minusQ = By * np.cos( gamma ) - ( Bx * np.cos( theta ) - Bz * np.sin( theta ) ) * np.sin( gamma )  # -Q is in scan direction
 
