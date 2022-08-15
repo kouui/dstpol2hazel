@@ -258,7 +258,7 @@ with h5py.File('obsdata.h5','r') as f:
 
 
 s = s.reshape(nscan,nslit,nwave,4)
-s_obs = s * ( ( nconts - ibias.reshape(nscan,1) )/clvs.reshape(nscan,1) ).reshape(nscan,nslit,1,1)
+s_obs = s * ( ( conts - ibias.reshape(nscan,1) )/clvs.reshape(nscan,1) ).reshape(nscan,nslit,1,1)
 s_obs[:,:,:,0] += ibias.reshape(nscan,1,1)
 ##: then s_obs is the observed stokes 2d spectra
 
