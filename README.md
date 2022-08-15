@@ -243,6 +243,8 @@ the result of inversion will be stored in `output.h5`, check hazel documentation
 
 ## 4. post processing
 
+###### with python
+
 with the data in `obsdata.h5`, to restore observed stokes profile
 ```python
 import h5py
@@ -290,6 +292,8 @@ B_minusQ = By * np.cos( gamma ) - ( Bx * np.cos( theta ) - Bz * np.sin( theta ) 
 ## then have fun with data visualization
 ...
 ```
+
+##### with IDL
 
 to read .h5 data in IDL( for details refer to https://www.l3harrisgeospatial.com/docs/hdf5_overview.html)
 ```IDL
