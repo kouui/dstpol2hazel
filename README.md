@@ -365,11 +365,13 @@ foreach name, ['nwave','nslit','nscan'], i do begin
 endforeach
 h5d_close, did
 
-did = h5d_open(fid, 'los')
+did = h5d_open(fid, 'LOS')
 losarr = h5d_read(did)
 h5d_close, did
 h5f_close, fid
 dim = {nwave:dims[0],nslit:dims[1],nscan:dims[2]}
+nslit = dim.nslit
+nscan = dim.nscan
 delvar, dims
 
 ;; step 2. read inversion result
